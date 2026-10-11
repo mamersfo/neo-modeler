@@ -9,6 +9,18 @@ Local Neo4j dev environment built from scratch:
   database through the official [neo4j MCP server](https://github.com/neo4j/mcp)
   (`.pi/mcp.json`).
 
+## Use as template
+
+This repo is a **GitHub template**. To create your own project from it:
+
+1. Go to <https://github.com/mamersfo/neo-modeler>
+2. Click **"Use this template"** → **"Create a new repository"**
+3. Give your new repo any name you like (e.g. `my-project-neo4j`)
+4. Clone your new repo and follow the Quickstart below
+
+Your new repo will have the full migration structure, Pi MCP config, and agent
+skills — ready to customize.
+
 ## Prerequisites
 
 - **Docker** — `neo` provisions a local `neo4j:5.26` container.

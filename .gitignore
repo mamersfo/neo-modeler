@@ -1,0 +1,7 @@
+.env
+aura.env
+neo4j-mcp
+mcp-*.json
+.provision.lock
+neo4j-data/
+.venv/

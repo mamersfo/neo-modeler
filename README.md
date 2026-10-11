@@ -1,4 +1,4 @@
-# Devopz Neo4j
+# neo-modeler
 
 Local Neo4j dev environment built from scratch:
 
@@ -55,7 +55,7 @@ and reconnect via `/mcp` (see MCP wiring below).
 `neo init` generates `neo/neo.toml` with a **local-only password**. That file is listed
 in `.gitignore`, so it is never committed (per `AGENTS.md` §5 — never commit the
 password). The version-controlled parts of `neo/` — `neo/migrations/` and
-`neo/seed.cypher` — *are* committed, so a fresh clone already has the schema and seed
+`neo/seed.cypher` — _are_ committed, so a fresh clone already has the schema and seed
 and only needs `neo init` to (re)generate its local `neo.toml`. Recover the password
 with `neo status --output json | jq -r '.password'`; `neo init` regenerates it if
 missing. Don't hand-edit an already-applied migration — see `AGENTS.md` §4.
@@ -70,8 +70,8 @@ survives password changes. If Pi lists the server as `failed`, the container is 
 run `neo start` and reconnect via `/mcp`. Launch Pi from the repo root.
 
 > **Safe to commit:** `.pi/mcp.json` contains no secrets. Its `NEO4J_MCP_*` values are
-derived at server launch from `neo status --output json`, and the DB password lives in the
-gitignored `neo/neo.toml` (see Secrets). Commit it freely.
+> derived at server launch from `neo status --output json`, and the DB password lives in the
+> gitignored `neo/neo.toml` (see Secrets). Commit it freely.
 
 ### Download `neo4j-mcp`
 

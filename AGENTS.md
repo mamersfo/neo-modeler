@@ -66,6 +66,7 @@ CALL dbms.components() YIELD name, versions, edition RETURN name, versions, edit
 | CSV/JSON bulk import | `neo4j-import-skill` |
 | Slow-query diagnosis (EXPLAIN/PROFILE) | `neo4j-query-tuning-skill` |
 | Application driver code (JS/TS, Go) | `neo4j-driver-javascript-skill`, `neo4j-driver-go-skill` |
+| Live DB inspection / ad-hoc queries from the agent | `neo4j` MCP server via `.pi/mcp.json` — see §6 |
 | Production/Aura, backups, users | Not this repo — do not point `neo` at anything but localhost |
 
 Do not hand-roll `docker run neo4j` when the `neo` workflow applies; `neo` owns the
@@ -122,3 +123,36 @@ Typical from-scratch order:
   branch on these in scripts.
 - If a generated query fails with a syntax error, suspect a **Cypher 25 feature leaking
   in from a skill default** before suspecting your data.
+- **MCP writes are throwaway** — anything that must survive `neo db reset` belongs in a
+  migration or `seed.cypher` (§6). Use `mcp__neo4j__write-cypher` only for experiments.
+
+---
+
+## 6. Pi MCP server (neo4j)
+
+The Pi harness connects to the **official Neo4j MCP server** through the project config
+`.pi/mcp.json` (stdio, `direct` exposure). Three tools:
+
+- `mcp__neo4j__get-schema` — labels, relationship types, property keys (read-only)
+- `mcp__neo4j__read-cypher` — read-only queries: verification, counts, `EXPLAIN`
+- `mcp__neo4j__write-cypher` — arbitrary Cypher with write access
+
+Wiring:
+
+- **Binary:** `./neo4j-mcp` at the repo root (gitignored — drop the release binary there;
+  `./neo4j-mcp --help` lists options). Requires `neo` and `jq` on `PATH`.
+- **No credentials committed.** Env values in `.pi/mcp.json` are derived at server launch
+  from `neo status --output json` (URI, user, password), so the config survives
+  `neo init` re-runs and password changes. Never hardcode the password there.
+- **The DB must be running.** If Pi lists the server as `failed`, the container is down:
+  `neo start`, then reconnect via `/mcp` (a dropped connection retries on the next call).
+- Launch Pi **from the repo root** — project MCP config is discovered from the session
+  directory, not from subdirectories.
+- Read/write is on by default. To restrict the agent to inspection, set
+  `"NEO4J_MCP_READ_ONLY": "true"` in the `env` block of `.pi/mcp.json`.
+
+**Division of labor:** migrations own the graph (§3–§4). Use the MCP tools for inspection,
+verification, and throwaway experiments; durable schema/data changes go through
+`neo migration new` + `neo db reset` — otherwise `neo db reset` wipes them and the model
+drifts from the migration history. Cypher sent through MCP is subject to the same
+**5.26 compatibility rules (§1)**.

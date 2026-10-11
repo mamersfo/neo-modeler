@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "neo4j": {
+      "command": "./neo4j-mcp",
+      "cwd": ".",
+      "env": {
+        "NEO4J_MCP_URI": "!neo status --output json | jq -r '.bolt_url'",
+        "NEO4J_MCP_USERNAME": "!neo status --output json | jq -r '.user'",
+        "NEO4J_MCP_PASSWORD": "!neo status --output json | jq -r '.password'",
+        "NEO4J_MCP_DATABASE": "neo4j",
+        "NEO4J_MCP_TELEMETRY": "false"
+      },
+      "exposure": "direct",
+      "description": "Read and write the local Neo4j 5.26 dev database provisioned by the neo CLI: get-schema, read-cypher, write-cypher. Requires the DB running (neo start) and the neo4j-mcp binary at the repo root."
+    }
+  }
+}

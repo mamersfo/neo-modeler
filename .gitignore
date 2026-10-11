@@ -4,4 +4,6 @@ neo4j-mcp
 mcp-*.json
 .provision.lock
 neo4j-data/
+# local-only generated password — never commit (AGENTS.md §5)
+neo/neo.toml
 .venv/
